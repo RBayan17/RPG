@@ -46,3 +46,4 @@ while on: #
 pygame.quit #ends pygame
 sys.exit #ends program
 #Not my president
+#shutup
