@@ -1,0 +1,27 @@
+heroSpeed = 0
+heroAttack = 0
+heroIntelligence = 0
+heroDefence = 0
+heroHealth = 50
+heroMagic = 50
+
+
+
+class Battle:
+    def __init__(self, attack, defence, intelligence, speed, price, value):
+        self.attack = attack
+        self.defense = defence
+        self.intelligence = intelligence
+        self.speed = speed
+        self.price = price
+        self.value = value
+
+# Chestplates
+tatteredTunic = Battle(0, 0, 0, 0, 0, 75)
+cmChestplate = Battle(0, 3, 0, 0, 150, 100)
+ironChestplate =
+steelChestplate =
+mithrilChestplate =
+
+
+
