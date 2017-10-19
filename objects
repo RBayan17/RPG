@@ -4,24 +4,85 @@ heroIntelligence = 0
 heroDefence = 0
 heroHealth = 50
 heroMagic = 50
-
+C = 'chestplate'
+B = 'boots'
+H = 'helm'
+G = 'guantlet'
+W = 'weapon'
 
 
 class Battle:
-    def __init__(self, attack, defence, intelligence, speed, price, value):
+    weapon
+
+    fullAttack = heroAttack + weaponAttack
+    fullDefence = heroDefence + weaponDefence
+    fullSpeed = heroSpeed + weaponSpeed
+    fullIntelligence = heroIntelligence + weaponIntelligence
+
+    def __init__(self, attack, defence, intelligence, speed, price, value, owned, equipped, type):
         self.attack = attack
-        self.defense = defence
+        self.defence = defence
         self.intelligence = intelligence
         self.speed = speed
         self.price = price
         self.value = value
+        self.owned = owned
+        self.equipped = equipped
+        self.type = type
+
+    def equip(self):
+        if self.owned == 1:
+            if self.equipped == 1:
+                weaponAttack =+ self.attack
+                weaponSpeed =+ self.speed
+                weaponDefence =+ self.defence
+                weaponIntelligence =+ self.intelligence
+            else:
+                weaponAttack = 0
+                weaponSpeed = 0
+                weaponDefence = 0
+                weaponIntelligence = 0
+        else:
+            weaponAttack = 0
+            weaponSpeed = 0
+            weaponDefence = 0
+            weaponIntelligence = 0
+
+
+
 
 # Chestplates
-tatteredTunic = Battle(0, 0, 0, 0, 0, 75)
-cmChestplate = Battle(0, 3, 0, 0, 150, 100)
-ironChestplate =
-steelChestplate =
-mithrilChestplate =
+tatteredTunic = Battle(0, 0, 0, 0, 0, 75, 0, 0, C)
+cmChestplate = Battle(0, 3, 0, 0, 150, 100, 0, 0, C)
+ironChestplate = Battle(0, 4, 0, 0, 275, 225, 0, 0, C)
+steelChestplate = Battle(0, 5, 0, 0, 400, 300, 0, 0, C)
+mithrilChestplate = Battle(0, 6, 0, 0, 600, 500, 0, 0, C)
+chestplateOfTheNight = Battle(0, 6, 3, 0, 0, 600, 0, 0, C)
+
+# Boots
+roughBoots = Battle(0, 0, 0, 0, 0, 25, 0, 0, B)
+cmBoots = Battle(0, 1, 0, 1, 75, 50, 0, 0, B)
+ironBoots = Battle(0, 2, 0, 2, 150, 100, 0, 0, B)
+steelBoots = Battle(0, 3, 0, 3, 250, 200, 0, 0, B)
+mithrilBoots = Battle(0, 4, 0, 4, 450, 350, 0, 0, B)
+hermesBoots = Battle(0, 0, 0, 6, 300, 250, 0, 0, B)
+
+# Helms
+cmHelm = Battle(0, 2, 0, 0, 100, 75, 0, 0, H)
+ironHelm = Battle(0, 3, 0, 0, 200, 175, 0, 0, H)
+steelHelm = Battle(0, 4, 3, 0, 300, 250, 0, 0, H)
+mithrilHelm = Battle(0, 5, 4, 0, 500, 400, 0, 0, H)
+hornedHelmOfOdin = Battle(0, 4, 1, 0, 0, 375, 0, 0, H)
+
+# Gauntlets
 
 
+# Weapons
+testsword = Battle(5, 0, 0, 0, 0, 0, 1, 1, W)
+
+
+print(equip.fullAttack)
+print(equip.fullDefence)
+print(equip.fullIntelligence)
+print(equip.fullSpeed)
 
