@@ -1,0 +1,256 @@
+#Just my imports
+import pygame
+import random
+import math, time, sys, os, _osx_support
+pygame.init()
+
+#The window screen measurements
+display_width = 600
+display_height = 600
+
+#Availible colours
+black = (0, 0, 0)
+white = (255, 255, 255)
+skyblue = (135, 206, 235)
+red = (255, 0, 0)
+midnightblue = (25, 25, 112)
+aqua = (0, 255, 255)
+green = (0, 100, 0)
+bright_green = (0, 255, 0)
+dark_red = (139, 0, 0)
+bright_red = (255, 0, 0)
+
+#Width of thorImg
+xwing_width = 105
+
+#This is the display screen and the importing of the image.
+gameDisplay = pygame.display.set_mode((display_height, display_width))
+pygame.display.set_caption('Star Wars Galaxy')
+clock = pygame.time.Clock()
+xwingImg = pygame.image.load('starwars.png')
+
+
+pygame.display.set_icon(xwingImg)
+
+#Declaring pause globally
+pause = True
+
+#This loads the background image
+background_image = pygame.image.load("Space.png")
+background_position = [0,0]
+
+#This is the score system
+def things_dodged(count):
+    font = pygame.font.Font('freesansbold.ttf', 25)
+    text = font.render("Dodged: "+str(count), True, white)
+    gameDisplay.blit(text, (0,0))
+
+#This is defining the things that "thor" or the plane dodges
+def things(thingx, thingy, thingw, thingh, color):
+    pygame.draw.rect(gameDisplay, color, [thingx, thingy, thingw, thingh])
+
+#This defines my image, and it's position
+def xwing(x,y):
+    gameDisplay.blit(xwingImg,(x,y))
+
+#This is where the text will show when you get hit
+def text_objects(text, font):
+    textSurface = font.render(text, True, white)
+    return textSurface, textSurface.get_rect()
+def message_display(text):
+    largeText = pygame.font.Font('freesansbold.ttf', 40)
+    TextSurf, TextRect = text_objects(text, largeText)
+    TextRect.center = ((display_width/2),display_height/2)
+    gameDisplay.blit(TextSurf, TextRect)
+
+    pygame.display.update()
+
+    #the text display time
+    time.sleep(2)
+
+    game_loop()
+
+#This is the message that displays when you get hit
+def hit():
+
+    largeText = pygame.font.Font('freesansbold.ttf', 40)
+    TextSurf, TextRect = text_objects('Your ship is destroyed', largeText)
+    TextRect.center = ((display_width / 2), display_height / 2)
+    gameDisplay.blit(TextSurf, TextRect)
+
+    while True:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                quit()
+
+        button("Retry", 150, 450, 100, 50, bright_green, green, game_loop)
+        button("Quit!", 350, 450, 100, 50, red, dark_red, quitgame)
+
+        pygame.display.update()
+        clock.tick(5)
+
+#This is the button part
+def button(msg,x,y,w,h,ic,ac, action=None):
+    mouse = pygame.mouse.get_pos()
+    click = pygame.mouse.get_pressed()
+    if x + w > mouse[0] > x and y + h > mouse[1] > y:
+        pygame.draw.rect(gameDisplay, ac,(x,y,w,h))
+        if click[0] == 1 and action!= None:
+            action()
+    else:
+        pygame.draw.rect(gameDisplay, ic, (x, y, w, h))
+    smallText = pygame.font.Font("freesansbold.ttf", 20)
+    textSurf, textRect = text_objects(msg, smallText)
+    textRect.center = ((x + (w / 2)), (y + (27)))
+    gameDisplay.blit(textSurf, textRect)
+
+def quitgame():
+    pygame.quit()
+    quit()
+
+#This is the pause screen and system (next 19 lines)
+def unpause():
+    global pause
+    pause = False
+
+def paused():
+    # gameDisplay.fill(black)
+    largeText = pygame.font.Font('freesansbold.ttf', 40)
+    TextSurf, TextRect = text_objects('Paused', largeText)
+    TextRect.center = ((display_width / 2), display_height / 2)
+    gameDisplay.blit(TextSurf, TextRect)
+
+    intro = pause
+
+    while pause:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                quit()
+
+        button("Continue", 150, 450, 100, 50, bright_green, green, unpause)
+        button("Quit!", 350, 450, 100, 50, red, dark_red, quitgame)
+
+        pygame.display.update()
+        clock.tick(5)
+
+#From lines 12 lines are the intro
+def game_intro():
+
+    intro = True
+
+    while intro:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                quit()
+
+        gameDisplay.fill(black)
+        largeText = pygame.font.Font('freesansbold.ttf', 40)
+        TextSurf, TextRect = text_objects('Ship Dodges Blocks', largeText)
+        TextRect.center = ((display_width / 2), display_height / 2)
+        gameDisplay.blit(TextSurf, TextRect)
+
+        #This is the whole intro button system
+        button("Go!", 150, 450, 100, 50, bright_green, green, game_loop)
+        button("Quit!", 350, 450, 100, 50, red, dark_red, quitgame)
+
+        pygame.display.update()
+        clock.tick(5)
+
+#We loop the game (rather than quiting) also this is the positioning of our character
+def game_loop():
+    x = (display_width * 0.20)
+    y = (display_height * 0.45)
+
+    #This is the things thor dodges
+    thing_startx = random.randrange(0, display_width)
+    thing_starty = -600
+    thing_speed = 5
+    thing_width = 100
+    thing_height = 100
+
+    #Part of the score system
+    dodged = 0
+
+    #When not moving this is the "speed" of our character
+    x_change = 0
+    y_change = 0
+    gameExit = False
+
+    #Game exit part
+    while not gameExit:
+
+        #Look above for this direction
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                gameExit = True
+
+            #This is how we move
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_LEFT:
+                    x_change = -5
+                if event.key == pygame.K_RIGHT:
+                    x_change = 5
+                if event.key == pygame.K_UP:
+                    y_change = -5
+                elif event.key == pygame.K_DOWN:
+                    y_change = 5
+
+                #This is the pause key
+                if event.key == pygame.K_ESCAPE:
+                    pause = True
+                    paused()
+                
+
+            #We have this so that if you're not pressing any keys Thor stops
+            if event.type == pygame.KEYUP:
+                if event.key == pygame.K_LEFT or event.key == pygame.K_RIGHT or event.key == pygame. K_UP or event.key == pygame.K_DOWN:
+                    x_change = 0
+                    y_change = 0
+        x += x_change
+        y += y_change
+
+        #This is the other part to having our background image
+        gameDisplay.blit(background_image,background_position)
+
+        #gameDisplay.fill(midnightblue)
+
+        # Things (thingx, thingy, thingw, thingh, color)
+        things(thing_startx, thing_starty, thing_width, thing_height, red)
+        thing_starty += thing_speed
+        xwing (x,y)
+        things_dodged(dodged)
+
+        #This is the boundary
+        if x > display_width - xwing_width or x < 0:
+            hit()
+        if y > display_height - xwing_width or y <0:
+            hit()
+
+        #This is how we dodge it + the score
+        if thing_starty > display_height:
+            thing_starty = 0 - thing_height
+            thing_startx = random.randrange(0, display_width)
+            dodged += 1
+            thing_speed += 1
+            thing_width += (dodged * 1.2)
+
+        #This is the dodging part aspect
+        if y < thing_starty+thing_height:
+            print('y crossover')
+
+            #Continue of top part
+            if x > thing_startx and x < thing_startx + thing_width or x+xwing_width > thing_startx and x + xwing_width < thing_startx+thing_width:
+                print('x crossover')
+                hit()
+
+        pygame.display.update()
+        clock.tick(60)
+
+#This loops the game and allows quitting
+game_intro()
+game_loop()
+pygame.quit()
+quit()
